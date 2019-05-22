@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[64]:
+# In[13]:
 
 
 from sklearn.neighbors import NearestNeighbors
@@ -9,49 +9,51 @@ from sklearn.neighbors import LocalOutlierFactor
 import pandas as pd
 
 
-# In[16]:
+# In[14]:
 
 
 df = pd.read_csv("keystroke.csv")
 
 
-# In[17]:
+# In[15]:
 
 
 df.head()
 
 
-# In[18]:
+# In[16]:
 
 
 df.info()
 
 
-# In[45]:
+# In[17]:
 
 
 df.describe()
 
 
-# In[19]:
+# In[18]:
 
 
 df.columns
 
 
-# In[20]:
+# In[19]:
 
 
+subject = df.subject
+sessionIndex = df.sessionIndex
 df = df.drop(['subject','sessionIndex', 'rep'],axis=1)
 
 
-# In[51]:
+# In[20]:
 
 
 df.shape
 
 
-# In[71]:
+# In[21]:
 
 
 # fit the model for outlier detection (default)
@@ -62,21 +64,30 @@ clf = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
 y_pred = clf.fit_predict(df)
 
 
-# In[73]:
+# In[22]:
 
 
 pred = pd.DataFrame(y_pred)
 pred.describe()
 
 
-# In[91]:
+# In[23]:
 
 
 pred[0].value_counts()
 
 
-# In[ ]:
+# In[42]:
 
 
+pred["sessionIndex"] = sessionIndex
+pred["subject"] = subject
+pred.columns = ["isAnomaly", 'sessionIndex',"subject"]
+pred.head()
 
+
+# In[46]:
+
+
+pred.groupby(["subject",'sessionIndex']).isAnomaly.value_counts()
 
